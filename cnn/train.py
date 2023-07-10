@@ -106,14 +106,16 @@ def train_model(X_profiling, Y_profiling, model, save_file_name, val_accuracy, e
                         verbose=verbose, epochs=epochs,
                         shuffle=True, callbacks=None)
     val_accuracy2 = history.history['val_accuracy'][-1]
-    summer=abs(val_accuracy2-val_accuracy)
-    if(summer>0.01):
-        print("[LOG] -- VAL ACC INCREASED........... SAVING MDOEL",summer)
+    summer=(val_accuracy2-val_accuracy)
+    # print(val_accuracy2)
+    # print(val_accuracy)
+    if(summer>0.001):
+        print("[LOG] -- VAL ACC INCREASED........... SAVING MDOEL",val_accuracy2)
         model.save(save_file_name)
+        return history,val_accuracy2
     else:
         print("[LOG] -- Val ACC Did Not Increase")
-
-    return history,val_accuracy2
+        return history,val_accuracy
 
 
 def parseArgs(argv):
@@ -228,7 +230,8 @@ def train(opts):
         weights1=mask(model_pruned,opts)
         model_pruned=model_zoo.copy_modified_weights(weights1,model_pruned, model_pruned,opts.debug)
    
-    print('[LOG] -- model save to path: {}'.format(save_file_name))
+    print('[LOG] -- FINAL VAL ACC:',val_accuracy)
+
     t1 = time.time()
     total = t1-t0
     print("RUNTIME: ",total)
