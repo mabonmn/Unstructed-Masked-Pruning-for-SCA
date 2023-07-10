@@ -173,7 +173,17 @@ def mask(model,opts):
     return weights1
 
 
-
+def display_cnn_weights(model):
+    for j,layer in enumerate(model.layers):
+        print(f"Layer Name: {layer.name}")
+        print(f"Weights:")
+        weights = layer.get_weights()
+        if ("conv" or "dense" in layer.name) and j != (len(model.layers) - 1) :  # Fix the attribute name from "layer.layer" to "layer.name"
+            #print(f"Layer: {layer.name}")
+            for i, weight in enumerate(weights):
+                #print(f"Weight {i}: {weight.shape}")
+                if i == 1:
+                    print(weight)
 
 def train(opts):
     # get the params
@@ -210,22 +220,27 @@ def train(opts):
         emb_size=256
 
     model_file = os.path.join(opts.model_dir,'model','best_model.h5')
-    model_pruned= model_zoo.cnn_best(input_shape, emb_size=emb_size, classification=True)
+    #model_pruned= model_zoo.cnn_best(input_shape, emb_size=emb_size, classification=True)
 
-    model = load_model(model_file)
+    model_pruned = load_model(model_file)
     print("ORiginal Model")
-    model.summary()
+    # model.summary()
     # model = model_zoo.create_hamming_weight_model(input_shape)
     print("Pruned Model")
     model_pruned.summary()
-    weights1=mask(model,opts)
-    model_pruned=model_zoo.copy_modified_weights(weights1,model, model_pruned,opts.debug)
+    weights1=mask(model_pruned,opts)
+    model_pruned=model_zoo.copy_modified_weights(weights1,model_pruned, model_pruned,opts.debug)
+    if opts.debug==True:
+        display_cnn_weights(model_pruned)
+        
     if 'hw_model' == network_type:
         print('now train dnn model for HW leakage model over {} dataset...'.format(opts.input))
     else:
         print('now train dnn model for ID leakage model over {} dataset...'.format(opts.input))
     t0 = time.time()
     for i in trange(opts.epochs):
+        if val_accuracy!=0 and opts.debug==True:
+            display_cnn_weights(model_pruned)
         history,val_accuracy = train_model(X_profiling, Y_profiling, model_pruned, model_save_file,val_accuracy, 1, batch_size, verbose)
         weights1=mask(model_pruned,opts)
         model_pruned=model_zoo.copy_modified_weights(weights1,model_pruned, model_pruned,opts.debug)
