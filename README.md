@@ -1,3 +1,8 @@
+## Reference
+When reporting results that use the dataset or code in this repository, please cite the paper below:
+
+Haipeng Li, Mabon Ninan, Boyang Wang, John M. Emmert, "TinyPower: Side-Channel Attacks with Tiny Neural Networks," IEEE International Symposium on Hardware Oriented Security and Trust (**IEEE HOST 2024**), Washington DC, USA, May 6-9 2024
+
 # Unstructed-Masked-Pruning-for-SCA
 Unstructued Mased Pruning for SCA.
 # Introduction:
