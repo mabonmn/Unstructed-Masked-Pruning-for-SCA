@@ -55,6 +55,3 @@ Contact Mabon Ninan
 UCDasec
 
 ninanmm@mail.uc.edu
-
-# Reference
-Mabon Ninan, Boyang Wang, "UC DASEC" 
